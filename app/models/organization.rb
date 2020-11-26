@@ -60,8 +60,8 @@ class Organization < ApplicationRecord
   before_save :generate_secret
   after_save :bust_cache
 
-  after_commit :sync_related_elasticsearch_docs, on: %i[update destroy]
-  after_commit :bust_cache, on: :destroy
+  after_commit :sync_related_elasticsearch_docs, on: :update
+  after_commit :bust_cache, :force_sync, on: :destroy
 
   mount_uploader :profile_image, ProfileImageUploader
   mount_uploader :nav_image, ProfileImageUploader
@@ -150,5 +150,9 @@ class Organization < ApplicationRecord
 
   def sync_related_elasticsearch_docs
     DataSync::Elasticsearch::Organization.new(self).call
+  end
+
+  def force_sync
+    DataSync::Elasticsearch::Organization.new(self).force_sync
   end
 end

@@ -20,6 +20,7 @@ module DataSync
       end
 
       def sync_related_documents
+        binding.pry
         self.class::RELATED_DOCS.each do |relation_name|
           __send__(relation_name).find_each(&:index_to_elasticsearch)
         end

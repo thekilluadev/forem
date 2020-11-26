@@ -12,6 +12,10 @@ module DataSync
       ].freeze
 
       delegate :articles, to: :@updated_record
+
+      def force_sync
+        sync_related_documents
+      end
     end
   end
 end

@@ -83,9 +83,10 @@ RSpec.describe Organization, type: :model do
 
     it "on destroy removes data from elasticsearch" do
       article = create(:article, organization: organization)
-      sidekiq_perform_enqueued_jobs
+      drain_all_sidekiq_jobs
       expect(article.elasticsearch_doc.dig("_source", "organization", "id")).to eq(organization.id)
       organization.destroy
+      binding.pry
       sidekiq_perform_enqueued_jobs
       expect(article.elasticsearch_doc.dig("_source", "organization")).to be_nil
     end
